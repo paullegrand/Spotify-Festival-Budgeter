@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="min-w-screen min-h-screen bg-gray-900 text-gray-100">
       <Header />
-      {isLoggedIn ? <Home /> : <Login />}
+      <div className="mx-auto">{isLoggedIn ? <Home /> : <Login />}</div>
     </div>
   );
 }

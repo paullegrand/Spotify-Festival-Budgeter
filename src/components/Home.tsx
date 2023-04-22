@@ -1,64 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { fetchTopArtists } from "../api/spotify";
-import ArtistCard from "./ArtistCard";
-import Select from "./forms/Select";
+import { useState } from "react";
+import LineupBuilder from "./LineupBuilder";
 
 export default function Home() {
-  const [profile, setProfile] = useState<UserProfile>();
-  const [topArtists, setTopArtists] = useState<TopArtists>();
-  const [selectedTimeRange, setSelectedTimeRange] =
-    useState<string>("medium_term");
+  const [isBuildingLineup, setIsBuildingLineup] = useState(true);
+  const [selectedArtists, setSelectedArtists] = useState<Artist[]>([]);
 
-  // Immediately load our top artists with our currently selected timeframe
-  useEffect(() => {
-    fetchTopArtists(selectedTimeRange).then((topArtists) =>
-      setTopArtists(topArtists)
-    );
-  }, [selectedTimeRange]);
+  const buildFestival = (artists: Artist[]): void => {
+    // Sort our artists by popularity
+    artists.sort((a, b) => {
+      if (a.popularity > b.popularity) return -1;
+      else if (a.popularity < b.popularity) return 1;
+      return 0;
+    });
 
-  const timerangeOptions = [
-    {
-      label: "4 weeks",
-      value: "short_term",
-    },
-    {
-      label: "6 Months",
-      value: "medium_term",
-    },
-    {
-      label: "Several Years",
-      value: "long_term",
-    },
-  ];
-
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedTimeRange(event.target.value);
+    setIsBuildingLineup(false);
+    setSelectedArtists(artists);
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="mx-8 mt-4 flex flex-row gap-8">
-        <Select
-          options={timerangeOptions}
-          label="View my top artists from the past..."
-          name="time_range"
-          selectedValue={selectedTimeRange}
-          handleChange={handleChange}
-        />
-
-        {profile && <code>{JSON.stringify(profile)}</code>}
-      </div>
-
-      {topArtists && (
-        <ul
-          role="list"
-          className="grid grid-cols-1 gap-6 m-8 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {topArtists.items.map((artist) => (
-            <ArtistCard key={artist.id} artist={artist} hireArtist={() => {}} />
-          ))}
-        </ul>
+    <>
+      {isBuildingLineup ? (
+        <LineupBuilder buildFestival={buildFestival} />
+      ) : (
+        <div className="flex flex-col">
+          <div className="max-w-7xl mx-auto">
+            {selectedArtists.map((artist) => (
+              <p key={artist.id}>{artist.name}</p>
+            ))}
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }

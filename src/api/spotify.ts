@@ -20,10 +20,13 @@ export async function fetchTopArtists(time_range: string): Promise<TopArtists> {
     throw new Error("No access token found");
   }
 
+  const params = new URLSearchParams({
+    time_range,
+    limit: "50",
+  });
+
   const result = await fetch(
-    `https://api.spotify.com/v1/me/top/artists?time_range=${encodeURIComponent(
-      time_range
-    )}&limit=50`,
+    `https://api.spotify.com/v1/me/top/artists?${params.toString()}`,
     {
       method: "GET",
       headers: { Authorization: `Bearer ${access_token}` },
