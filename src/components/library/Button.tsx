@@ -29,7 +29,7 @@ export default function Button({
       break;
     default:
       colorClasses =
-        "text-gray-100 bg-gray-500 hover:bg-gray-600 focus-visible:outline-gray-600";
+        "text-gray-100 bg-gray-500 hover:bg-gray-700 focus-visible:outline-gray-600";
   }
 
   switch (size) {

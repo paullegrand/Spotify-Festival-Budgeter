@@ -26,8 +26,6 @@ export default function LineupBuilder({
 }: Props) {
   const totalBudget = 5000000;
   const [remainingBudget, setRemainingBudget] = useState<number>(totalBudget);
-  const [remainingBudgetPercent, setRemainingBudgetPercent] =
-    useState<number>(100);
   const [topArtists, setTopArtists] = useState<TopArtists>();
   const [selectedTimeRange, setSelectedTimeRange] =
     useState<string>("medium_term");
@@ -47,15 +45,14 @@ export default function LineupBuilder({
 
   // When we hire an artist, automatically update the remaining budget, and the percent of budget remaining
   useEffect(() => {
+    // Start with our total budget
+    // And for every artist, decrease our budget by their booking price
     let remainingBudget = totalBudget;
     hiredArtists.map((artist) => {
       remainingBudget -= priceForArtist(artist);
     });
+    // After every artist, set our remaining budget
     setRemainingBudget(remainingBudget);
-
-    setRemainingBudgetPercent(
-      Math.round((remainingBudget / totalBudget) * 100)
-    );
   }, [hiredArtists]);
 
   // For some reason, the artist object changes sometime from the spotify API.
@@ -109,17 +106,19 @@ export default function LineupBuilder({
       return;
     }
 
-    // All good? Hire them!
+    // All good? Book em!
     setHiredArtists([...hiredArtists, artist]);
   };
 
+  // When we click the drop button, we need to remove them from our hired artists array
+  // That will automatically trigger updating our remaining budget
   const handleRequestDropArtist = (artist: Artist) => {
     // Make sure we already have this artist hired
     if (!isArtistHired(artist)) {
       throw new Error("Artist is not hired yet, we can't fire them!");
     }
 
-    // All good? go ahead and fire em.
+    // All good? go ahead and drop em.
     setHiredArtists(hiredArtists.filter((a) => a.id !== artist.id));
   };
 
@@ -144,13 +143,14 @@ export default function LineupBuilder({
               </span>
               <span className="text-xs md:text-base font-medium text-gray-100 text-right">
                 <AnimatedCounter value={remainingBudget} isCurrency /> /{" "}
-                {formatCurrency(totalBudget, 0)} ({remainingBudgetPercent}%)
+                {formatCurrency(totalBudget, 0)} (
+                {Math.round((remainingBudget / totalBudget) * 100)}%)
               </span>
             </div>
             <div className="w-full rounded-full h-2.5 bg-gray-700">
               <div
                 className="bg-emerald-300 h-2.5 rounded-full"
-                style={{ width: remainingBudgetPercent + "%" }}
+                style={{ width: (remainingBudget / totalBudget) * 100 + "%" }}
               ></div>
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function LineupBuilder({
       {topArtists && (
         <ul
           role="list"
-          className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto p-2 md:p-8"
+          className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto py-2 md:py-8 mb-24"
         >
           {topArtists.items.map((artist) => (
             <ArtistCard

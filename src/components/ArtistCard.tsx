@@ -21,8 +21,8 @@ export default function ArtistCard({
       <div className="flex flex-1 flex-row flex-wrap p-4 md:p-8 pb-2">
         <div className="w-full md:w-1/2">
           <img
-            className="mx-auto h-16 w-16 md:h-32 md:w-32 flex-shrink-0 rounded-full drop-shadow-xl"
-            src={artist.images[0].url}
+            className="mx-auto h-16 w-16 md:h-32 md:w-32 rounded-full drop-shadow-xl"
+            src={artist.images[2].url}
             alt={artist.name}
           />
         </div>
@@ -36,7 +36,7 @@ export default function ArtistCard({
           </dl>
         </div>
       </div>
-      <div className="flex flex-col pb-4 mx-8">
+      <div className="flex flex-col pb-4 mx-4 md:mx-8">
         {isHired ? (
           <Button intent="default" onClick={() => dropArtist(artist)}>
             Drop
