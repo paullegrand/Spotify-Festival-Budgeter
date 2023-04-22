@@ -3,9 +3,10 @@ import Button from "../components/library/Button";
 
 interface Props {
   artist: Artist;
-  bookArtist: (artist: Artist, price: number) => void;
-  dropArtist: (artist: Artist, price: number) => void;
+  bookArtist: (artist: Artist) => void;
+  dropArtist: (artist: Artist) => void;
   isHired: boolean;
+  bookingPrice: number;
 }
 
 export default function ArtistCard({
@@ -13,9 +14,8 @@ export default function ArtistCard({
   bookArtist,
   dropArtist,
   isHired,
+  bookingPrice,
 }: Props) {
-  const artistBookingPrice = Math.pow(artist.popularity, 3);
-
   return (
     <li className="col-span-1 flex flex-col rounded-lg bg-white text-center shadow transform transition duration-500 hover:scale-110">
       <div className="flex flex-1 flex-row flex-wrap p-4 md:p-8 pb-2">
@@ -38,23 +38,17 @@ export default function ArtistCard({
       </div>
       <div className="flex flex-col pb-4 mx-8">
         {isHired ? (
-          <Button
-            intent="default"
-            onClick={() => dropArtist(artist, artistBookingPrice)}
-          >
+          <Button intent="default" onClick={() => dropArtist(artist)}>
             Drop
           </Button>
         ) : (
-          <Button
-            intent="success"
-            onClick={() => bookArtist(artist, artistBookingPrice)}
-          >
+          <Button intent="success" onClick={() => bookArtist(artist)}>
             Book
           </Button>
         )}
         <p className="text-gray-800 pt-2">
           {isHired ? "+" : "-"}
-          {formatCurrency(artistBookingPrice, 0)}{" "}
+          {formatCurrency(bookingPrice, 0)}{" "}
         </p>
       </div>
     </li>

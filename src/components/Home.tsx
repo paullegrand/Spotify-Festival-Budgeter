@@ -1,5 +1,7 @@
 import { useState } from "react";
 import LineupBuilder from "./LineupBuilder";
+import Footer from "./Footer";
+import Button from "./library/Button";
 
 export default function Home() {
   const [isBuildingLineup, setIsBuildingLineup] = useState(true);
@@ -17,17 +19,30 @@ export default function Home() {
     setSelectedArtists(artists);
   };
 
+  const backToBuilding = () => {
+    setIsBuildingLineup(true);
+  };
+
   return (
     <>
       {isBuildingLineup ? (
-        <LineupBuilder buildFestival={buildFestival} />
+        <LineupBuilder buildFestival={buildFestival} selectedArtists={selectedArtists} />
       ) : (
-        <div className="flex flex-col">
+        <div className="flex flex-col min-h-screen">
           <div className="max-w-7xl mx-auto">
-            {selectedArtists.map((artist) => (
-              <p key={artist.id}>{artist.name}</p>
-            ))}
+            {selectedArtists.length ? (
+              selectedArtists.map((artist) => (
+                <p key={artist.id}>{artist.name}</p>
+              ))
+            ) : (
+              <h2>No artists selected!</h2>
+            )}
           </div>
+          <Footer>
+            <Button intent="warning" onClick={backToBuilding}>
+              Go Back
+            </Button>
+          </Footer>
         </div>
       )}
     </>

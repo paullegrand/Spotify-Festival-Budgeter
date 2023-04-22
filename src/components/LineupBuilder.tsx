@@ -13,12 +13,17 @@ import Button from "./library/Button";
 // Toast alerts
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "./Footer";
 
 interface Props {
   buildFestival: (hiredArtists: Artist[]) => void;
+  selectedArtists: Artist[];
 }
 
-export default function LineupBuilder({ buildFestival }: Props) {
+export default function LineupBuilder({
+  buildFestival,
+  selectedArtists,
+}: Props) {
   const totalBudget = 5000000;
   const [remainingBudget, setRemainingBudget] = useState<number>(totalBudget);
   const [remainingBudgetPercent, setRemainingBudgetPercent] =
@@ -26,7 +31,7 @@ export default function LineupBuilder({ buildFestival }: Props) {
   const [topArtists, setTopArtists] = useState<TopArtists>();
   const [selectedTimeRange, setSelectedTimeRange] =
     useState<string>("medium_term");
-  const [hiredArtists, setHiredArtists] = useState<Artist[]>([]);
+  const [hiredArtists, setHiredArtists] = useState<Artist[]>(selectedArtists);
 
   // Immediately load our top artists with our currently selected timeframe
   useEffect(() => {
@@ -35,16 +40,22 @@ export default function LineupBuilder({ buildFestival }: Props) {
     );
   }, [selectedTimeRange]);
 
-  // When we hire an artist, automatically update the percent of our budget remaining
+  // Calculate how much each artist might cost, based on their popularity
+  // @TODO: Would it be possible to look up booking prices for artists, and get a line of best fit with an actual equation?
+  const priceForArtist = (artist: Artist): number =>
+    Math.pow(artist.popularity, 3);
+
+  // When we hire an artist, automatically update the remaining budget, and the percent of budget remaining
   useEffect(() => {
+    let remainingBudget = totalBudget;
+    hiredArtists.map((artist) => {
+      remainingBudget -= priceForArtist(artist);
+    });
+    setRemainingBudget(remainingBudget);
+
     setRemainingBudgetPercent(
       Math.round((remainingBudget / totalBudget) * 100)
     );
-  }, [remainingBudget]);
-
-  // Let's save our hired artists state so it persists between refresh
-  useEffect(() => {
-    localStorage.setItem("hiredArtists", hiredArtists.toString());
   }, [hiredArtists]);
 
   // For some reason, the artist object changes sometime from the spotify API.
@@ -78,7 +89,9 @@ export default function LineupBuilder({ buildFestival }: Props) {
   };
 
   // When we click the "Hire" button, this function handles that action
-  const handleRequestBookArtist = (artist: Artist, price: number) => {
+  const handleRequestBookArtist = (artist: Artist) => {
+    const price = priceForArtist(artist);
+
     // Make sure we have enough money left in our budget to hire this artist
     if (price > remainingBudget) {
       toast("💸 Money flies! You're over budget 😔", {
@@ -96,19 +109,17 @@ export default function LineupBuilder({ buildFestival }: Props) {
       return;
     }
 
-    // All good? Hire them! Update our budget and add them to our hired artists array
-    setRemainingBudget(remainingBudget - price);
+    // All good? Hire them!
     setHiredArtists([...hiredArtists, artist]);
   };
 
-  const handleRequestDropArtist = (artist: Artist, price: number) => {
+  const handleRequestDropArtist = (artist: Artist) => {
     // Make sure we already have this artist hired
     if (!isArtistHired(artist)) {
       throw new Error("Artist is not hired yet, we can't fire them!");
     }
 
-    // All good? go ahead and fire em. Remove them from our hired artists and give the user back their money
-    setRemainingBudget(remainingBudget + price);
+    // All good? go ahead and fire em.
     setHiredArtists(hiredArtists.filter((a) => a.id !== artist.id));
   };
 
@@ -158,18 +169,21 @@ export default function LineupBuilder({ buildFestival }: Props) {
               bookArtist={handleRequestBookArtist}
               dropArtist={handleRequestDropArtist}
               isHired={isArtistHired(artist)}
+              bookingPrice={priceForArtist(artist)}
             />
           ))}
         </ul>
       )}
       <ToastContainer />
-      <div className="bg-gray-500 sticky bottom-0">
-        <div className="flex flex-row gap-8 justify-end z-10 drop-shadow-xl max-w-7xl mx-auto">
-          <Button intent="success" onClick={() => buildFestival(hiredArtists)}>
-            Build festival
-          </Button>
-        </div>
-      </div>
+      <Footer>
+        <Button
+          intent="success"
+          onClick={() => buildFestival(hiredArtists)}
+          size="lg"
+        >
+          Build festival
+        </Button>
+      </Footer>
     </div>
   );
 }
