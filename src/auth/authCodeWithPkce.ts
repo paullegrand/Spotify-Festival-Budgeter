@@ -8,7 +8,9 @@ export async function redirectToAuthCodeFlow() {
   const params = new URLSearchParams({
     response_type: "code",
     client_id,
-    redirect_uri: "http://localhost:5173",
+    redirect_uri: import.meta.env.DEV
+      ? "http://localhost:5173"
+      : "https://d6dkwpxitazmw.cloudfront.net",
     scope: "user-read-private user-top-read",
     code_challenge_method: "S256",
     code_challenge: challenge,
@@ -30,7 +32,9 @@ export async function getAccessToken(code: string): Promise<void> {
       client_id,
       grant_type: "authorization_code",
       code,
-      redirect_uri: "http://localhost:5173",
+      redirect_uri: import.meta.env.DEV
+        ? "http://localhost:5173"
+        : "https://d6dkwpxitazmw.cloudfront.net",
       code_verifier: verifier,
     }),
   });

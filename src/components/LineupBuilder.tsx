@@ -102,8 +102,7 @@ export default function LineupBuilder({
     // Just for extra safesies, make sure we haven't already hired them
     // This shouldn't be an issue though
     if (isArtistHired(artist)) {
-      console.error("Artist is already hired!");
-      return;
+      throw new Error(`${artist.name} is already hired!`);
     }
 
     // All good? Book em!

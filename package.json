@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && aws s3 cp dist s3://spotify-festival-budgeter --recursive"
   },
   "dependencies": {
     "react": "^18.2.0",

@@ -56,7 +56,11 @@ const AnimatedCounter = ({
 
       // Have we reached the end? Yipee! Let's clear this puppy out.
       const shouldClear = increment > 0 ? start >= end : start <= end;
-      if (shouldClear) clearInterval(timer);
+      if (shouldClear) {
+        clearInterval(timer);
+        // Sometimes we get rounding errors, so just make sure we reached our fianl value
+        start = end;
+      }
       // Our interval is the frame duration
     }, frameDuration);
   });
