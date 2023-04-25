@@ -16,8 +16,8 @@ export default function Header() {
         aria-label="Global"
       >
         <div className="flex flex-row justify-between gap-8 w-full mx-8">
-          <p className="text-gray-100 font-bold py-2">
-            Spotify Festival Budgeter
+          <p className="text-gray-100 font-bold py-2 text-2xl">
+            Festie Budgeter
           </p>
           {isLoggedIn && (
             <Button intent="success" onClick={logOut}>

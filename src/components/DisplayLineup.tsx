@@ -1,61 +1,69 @@
 import { useEffect, useState } from "react";
 
+import Bg1 from "../assets/lineup-bgs/bg-1.png";
+import Bg2 from "../assets/lineup-bgs/bg-2.png";
+import Bg3 from "../assets/lineup-bgs/bg-3.png";
+import Bg4 from "../assets/lineup-bgs/bg-4-darkened.png";
+import Bg5 from "../assets/lineup-bgs/bg-5.png";
+
+import LineupImageDay from "./LineupImageDay";
+
 interface Props {
   artists: Artist[];
 }
 
 export default function DisplayLineup({ artists }: Props) {
-  const [lineupByDay, setLineupByDay] = useState<Artist[][]>([[]]);
+  const [lineupByDay, setLineupByDay] = useState<Record<string, Artist[]>>({
+    FRI: [],
+    SAT: [],
+    SUN: [],
+  });
 
   // Split the linup into three days
   // The list should be sorted by popularity, so let's just go by threes
   useEffect(() => {
-    const firstDay: Artist[] = [];
-    const secondDay: Artist[] = [];
-    const thirdDay: Artist[] = [];
+    const tempLineupByDay: Record<string, Artist[]> = {
+      FRI: [],
+      SAT: [],
+      SUN: [],
+    };
 
     for (let i = 0; i < artists.length; i++) {
       if (i % 3 === 0) {
-        firstDay.push(artists[i]);
+        tempLineupByDay["FRI"].push(artists[i]);
       } else if (i % 3 === 1) {
-        secondDay.push(artists[i]);
+        tempLineupByDay["SAT"].push(artists[i]);
       } else {
-        thirdDay.push(artists[i]);
+        tempLineupByDay["SUN"].push(artists[i]);
       }
     }
 
-    setLineupByDay([firstDay, secondDay, thirdDay]);
+    setLineupByDay(tempLineupByDay);
   }, [artists]);
 
   return (
-    <div className="flex flex-col">
-      <div className="max-w-7xl mx-auto py-4">
-        {lineupByDay[0].length ? (
-          <>
-            <div className="mb-4">
-              <h2 className="font-bold text-xl">Friday</h2>
-              {lineupByDay[0].map((artist) => (
-                <p>{artist.name}</p>
-              ))}
-            </div>
+    <div className="max-w-7xl mx-auto py-4">
+      <div className="flex flex-row gap-8 mx-8">
+        {/* Image selector */}
+        <div className="w-full flex-2">
+          {/* Image container */}
+          <div className="relative" style={{ height: "720px" }}>
+            {/* background Image */}
+            <img src={Bg4} className="absolute top-0 left-0" />
 
-            <div className="mb-4">
-              <h2 className="font-bold text-xl">Saturday</h2>
-              {lineupByDay[1].map((artist) => (
-                <p>{artist.name}</p>
+            {/* Linup by Day */}
+            <div className="absolute top-0 left-0 w-full h-full px-8">
+              {Object.keys(lineupByDay).map((day: string) => (
+                <LineupImageDay
+                  artists={lineupByDay[day]}
+                  day={day}
+                  key={day}
+                />
               ))}
             </div>
-
-            <div className="mb-4">
-              <h2 className="font-bold text-xl">Sunday</h2>
-              {lineupByDay[2].map((artist) => (
-                <p>{artist.name}</p>
-              ))}
-            </div>
-          </>
-        ) : (
-          <h2>No artists selected!</h2>
-        )}
+          </div>
+        </div>
+        <div className="flex-1">SOmething something</div>
       </div>
     </div>
   );

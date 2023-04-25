@@ -55,6 +55,10 @@ export default function LineupBuilder({
     setRemainingBudget(remainingBudget);
   }, [hiredArtists]);
 
+  setTimeout(() => {
+    if (topArtists) setHiredArtists(topArtists.items.slice(0, 20));
+  }, 500);
+
   // For some reason, the artist object changes sometime from the spotify API.
   // So, we want to check via ID rather than using `.includes()`
   const isArtistHired = (artist: Artist): boolean => {
