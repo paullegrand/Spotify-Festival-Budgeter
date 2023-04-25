@@ -122,44 +122,21 @@ export default function LineupBuilder({
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="sticky top-0 bg-gray-500 z-10 py-2 md:py-4 px-8 drop-shadow-xl">
-        <div className="max-w-7xl mx-auto flex flex-row flex-wrap md:flex-nowrap gap-4 md:gap-8 ">
-          <div className="w-full md:w-1/3">
-            <Select
-              options={timerangeOptions}
-              label="View my top artists from the past..."
-              name="time_range"
-              selectedValue={selectedTimeRange}
-              handleChange={handleTimeRangeChange}
-            />
-          </div>
-
-          <div className="w-full md:w-2/3">
-            <div className="flex justify-between mb-1 text-xs">
-              <span className="font-medium text-gray-100">
-                Remaining Budget
-              </span>
-              <span className="text-xs md:text-base font-medium text-gray-100 text-right">
-                <AnimatedCounter value={remainingBudget} isCurrency /> /{" "}
-                {formatCurrency(totalBudget, 0)} (
-                {Math.round((remainingBudget / totalBudget) * 100)}%)
-              </span>
-            </div>
-            <div className="w-full rounded-full h-2.5 bg-gray-700">
-              <div
-                className="bg-emerald-300 h-2.5 rounded-full"
-                style={{ width: (remainingBudget / totalBudget) * 100 + "%" }}
-              ></div>
-            </div>
-          </div>
-        </div>
+    <div className="flex flex-col max-w-7xl mx-auto px-2 md:px-8">
+      <div className="w-1/2 pt-4">
+        <Select
+          options={timerangeOptions}
+          label="View my top artists from the past..."
+          name="time_range"
+          selectedValue={selectedTimeRange}
+          handleChange={handleTimeRangeChange}
+        />
       </div>
 
       {topArtists && (
         <ul
           role="list"
-          className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto py-2 md:py-8 mb-24"
+          className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 py-2 md:py-8 mb-24"
         >
           {topArtists.items.map((artist) => (
             <ArtistCard
@@ -173,15 +150,35 @@ export default function LineupBuilder({
           ))}
         </ul>
       )}
+
       <ToastContainer />
       <Footer>
-        <Button
-          intent="success"
-          onClick={() => buildFestival(hiredArtists)}
-          size="lg"
-        >
-          Build festival
-        </Button>
+        <div className="w-full ml-8">
+          <div className="flex justify-between my-4">
+            <span className="font-medium text-gray-100">Remaining Budget</span>
+            <span className="text-xs md:text-base font-medium text-gray-100 text-right">
+              <AnimatedCounter value={remainingBudget} isCurrency /> /{" "}
+              {formatCurrency(totalBudget, 0)} (
+              {Math.round((remainingBudget / totalBudget) * 100)}%)
+            </span>
+          </div>
+          <div className="w-full rounded-full h-2.5 bg-gray-700">
+            <div
+              className="bg-emerald-300 h-2.5 rounded-full"
+              style={{ width: (remainingBudget / totalBudget) * 100 + "%" }}
+            ></div>
+          </div>
+        </div>
+
+        <div className="mr-8">
+          <Button
+            intent="success"
+            onClick={() => buildFestival(hiredArtists)}
+            size="lg"
+          >
+            Build festival
+          </Button>
+        </div>
       </Footer>
     </div>
   );

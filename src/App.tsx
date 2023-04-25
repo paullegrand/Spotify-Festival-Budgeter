@@ -2,7 +2,7 @@ import { getAccessToken } from "./auth/authCodeWithPkce";
 import { getCookie } from "./auth/storage";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import Login from "./components/Login";
+import Welcome from "./components/Welcome";
 
 function App() {
   // If we have a code query param, we're probably performing our
@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="min-w-screen min-h-screen bg-gray-900 text-gray-100">
       <Header />
-      <div className="mx-auto">{isLoggedIn ? <Home /> : <Login />}</div>
+      <div className="mx-auto">{isLoggedIn ? <Home /> : <Welcome />}</div>
     </div>
   );
 }

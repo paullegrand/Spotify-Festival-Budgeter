@@ -17,7 +17,7 @@ export default function ArtistCard({
   bookingPrice,
 }: Props) {
   return (
-    <li className="col-span-1 flex flex-col rounded-lg bg-white text-center shadow transform transition duration-500 hover:scale-110">
+    <li className="col-span-1 flex flex-col rounded-lg bg-white text-center shadow transform transition duration-500 hover:scale-105">
       <div className="flex flex-1 flex-row flex-wrap p-4 md:p-8 pb-2">
         <div className="w-full md:w-1/2">
           <img
